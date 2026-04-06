@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Pink — The Brain & Beyond</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET & ROOT ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink-blush:   #FDE8EF;
+      --pink-soft:    #F9C8D8;
+      --pink-mid:     #F2A0BA;
+      --pink-rose:    #E07B9A;
+      --pink-deep:    #C45B7A;
+      --white:        #FFFFFF;
+      --off-white:    #FDF5F8;
+      --text-dark:    #2A1A22;
+      --text-mid:     #6B4057;
+      --text-light:   #A07090;
+      --accent-mint:  #7EC8C0;
+      --accent-lilac: #C3B1D8;
+      --accent-amber: #F5C87A;
+      --glass-bg:     rgba(255,255,255,0.55);
+      --glass-border: rgba(255,255,255,0.75);
+      --blur:         blur(18px);
+      --radius-lg:    22px;
+      --radius-sm:    12px;
+      --shadow:       0 8px 32px rgba(180,80,120,0.10);
+      --shadow-card:  0 4px 24px rgba(180,80,120,0.08);
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body:    'DM Sans', sans-serif;
+      --transition:   all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      background: var(--off-white);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND MESH ──────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(242,160,186,0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 20%, rgba(195,177,216,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 70% at 50% 100%, rgba(126,200,192,0.14) 0%, transparent 60%),
+        var(--off-white);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── PAGE SYSTEM ──────────────────────────────────── */
+    .page { display: none; position: relative; z-index: 1; }
+    .page.active { display: block; animation: fadeIn 0.45s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+    /* ── NAV ──────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(253,232,239,0.62);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0 5vw;
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 500;
+      color: var(--pink-deep);
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text-mid); font-weight: 300; font-style: italic; font-size: 1rem; margin-left: 4px; vertical-align: middle; }
+
+    .nav-links { display: flex; gap: 6px; align-items: center; }
+    .nav-links a {
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--text-mid);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 50px;
+      transition: var(--transition);
+      cursor: pointer;
+      letter-spacing: 0.02em;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      background: var(--pink-soft);
+      color: var(--pink-deep);
+    }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--pink-deep); border-radius: 2px; transition: var(--transition); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(253,232,239,0.9);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--pink-deep); }
+    .mobile-close {
+      position: absolute; top: 20px; right: 5vw;
+      font-size: 2rem; cursor: pointer; color: var(--text-mid);
+      background: none; border: none; line-height: 1;
+    }
+
+    /* ── GLASS CARD ───────────────────────────────────── */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    /* ── CONTAINER ────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 5vw; }
+
+    /* ─────────────────────────────────────────────────── */
+    /*  PAGE: HOME                                         */
+    /* ─────────────────────────────────────────────────── */
+
+    /* Hero */
+    .hero {
+      padding: 100px 5vw 80px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--pink-rose);
+      background: rgba(240,160,186,0.15);
+      border: 1px solid rgba(240,160,186,0.35);
+      padding: 5px 18px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--text-dark);
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .hero h1 em { color: var(--pink-deep); font-style: italic; }
+    .hero-sub {
+      max-width: 540px;
+      margin: 0 auto 40px;
+      font-size: 1rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+    .hero-pill {
+      display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    }
+    .pill {
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .pill-primary {
+      background: var(--pink-deep);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(196,91,122,0.3);
+    }
+    .pill-primary:hover { background: var(--pink-rose); transform: translateY(-2px); }
+    .pill-ghost {
+      background: var(--glass-bg);
+      border: 1px solid var(--pink-soft);
+      color: var(--text-mid);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+    }
+    .pill-ghost:hover { background: var(--pink-soft); transform: translateY(-2px); }
+
+    /* Section label */
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 400;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .section-sub { font-size: 0.95rem; color: var(--text-light); margin-bottom: 40px; }
+
+    /* Featured strip */
+    .featured-section { padding: 60px 5vw; }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 700px) { .featured-grid { grid-template-columns: 1fr; } }
+
+    .article-card {
+      padding: 32px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .article-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(180,80,120,0.13); }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+    .tag-neuro   { background: rgba(195,177,216,0.3); color: #7B5EA7; }
+    .tag-cardio  { background: rgba(240,160,186,0.3); color: var(--pink-deep); }
+    .tag-med     { background: rgba(126,200,192,0.25); color: #3A9E97; }
+    .tag-psych   { background: rgba(245,200,122,0.3); color: #B07A2A; }
+    .tag-neurosc { background: rgba(195,177,216,0.3); color: #7B5EA7; }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+    .card-excerpt { font-size: 0.88rem; color: var(--text-light); line-height: 1.65; margin-bottom: 20px; }
+    .card-meta { font-size: 0.78rem; color: var(--text-light); display: flex; gap: 16px; align-items: center; }
+    .card-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--pink-soft); }
+
+    .card-sm .card-title { font-size: 1.15rem; }
+    .card-sm { padding: 24px; }
+
+    /* Categories */
+    .categories-section { padding: 20px 5vw 60px; }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+    }
+    .cat-card {
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .cat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--pink-soft);
+    }
+    .cat-icon { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+    .cat-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 400; color: var(--text-dark); margin-bottom: 4px; }
+    .cat-count { font-size: 0.75rem; color: var(--text-light); }
+
+    /* ─────────────────────────────────────────────────── */
+    /*  PAGE: CATEGORY                                     */
+    /* ─────────────────────────────────────────────────── */
+    .page-header {
+      padding: 80px 5vw 48px;
+      border-bottom: 1px solid rgba(242,160,186,0.2);
+      margin-bottom: 48px;
+    }
+    .page-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    .page-header p { color: var(--text-light); max-width: 500px; line-height: 1.65; }
+
+    .article-list { padding: 0 5vw 80px; }
+    .article-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* ─────────────────────────────────────────────────── */
+    /*  PAGE: ARTICLE                                      */
+    /* ─────────────────────────────────────────────────── */
+    .article-page { padding: 80px 5vw; }
+    .article-wrapper { max-width: 720px; margin: 0 auto; }
+    .article-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; color: var(--text-light);
+      cursor: pointer; margin-bottom: 40px;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .article-back:hover { color: var(--pink-deep); }
+    .article-back::before { content: '←'; }
+
+    .article-tag-line { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
+    .article-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+    .article-byline {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      display: flex; gap: 16px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(242,160,186,0.25);
+      margin-bottom: 36px;
+    }
+    .article-body { font-size: 1.02rem; line-height: 1.82; color: var(--text-mid); }
+    .article-body h3 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 400;
+      color: var(--text-dark);
+      margin: 36px 0 14px;
+      letter-spacing: -0.01em;
+    }
+    .article-body p { margin-bottom: 20px; }
+    .article-body .callout {
+      background: rgba(242,160,186,0.12);
+      border-left: 3px solid var(--pink-mid);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 18px 22px;
+      margin: 28px 0;
+      font-style: italic;
+      color: var(--text-mid);
+    }
+
+    /* ─────────────────────────────────────────────────── */
+    /*  PAGE: ABOUT                                        */
+    /* ─────────────────────────────────────────────────── */
+    .about-page { padding: 80px 5vw; }
+    .about-wrapper { max-width: 820px; margin: 0 auto; }
+    .about-hero {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 60px;
+    }
+    @media (max-width: 640px) { .about-hero { grid-template-columns: 1fr; } }
+    .about-avatar {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--pink-soft) 0%, var(--accent-lilac) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 5rem;
+    }
+    .about-intro h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .about-intro p { font-size: 0.97rem; color: var(--text-mid); line-height: 1.78; margin-bottom: 14px; }
+    .about-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .badge {
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 400;
+    }
+    .badge-pink { background: var(--pink-soft); color: var(--pink-deep); }
+    .badge-mint { background: rgba(126,200,192,0.25); color: #3A9E97; }
+    .badge-lilac { background: rgba(195,177,216,0.3); color: #7B5EA7; }
+
+    .about-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 560px) { .about-cards { grid-template-columns: 1fr; } }
+    .about-card { padding: 28px; }
+    .about-card h4 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 400; color: var(--text-dark); margin-bottom: 10px; }
+    .about-card p { font-size: 0.88rem; color: var(--text-light); line-height: 1.65; }
+
+    /* ─────────────────────────────────────────────────── */
+    /*  FOOTER                                             */
+    /* ─────────────────────────────────────────────────── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid rgba(242,160,186,0.25);
+      padding: 48px 5vw 36px;
+      text-align: center;
+      background: rgba(253,232,239,0.4);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--pink-deep);
+      margin-bottom: 14px;
+    }
+    .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .footer-links a {
+      font-size: 0.82rem; color: var(--text-light);
+      text-decoration: none; cursor: pointer;
+      transition: var(--transition);
+    }
+    .footer-links a:hover { color: var(--pink-deep); }
+    .footer-disclaimer {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      line-height: 1.7;
+      max-width: 560px;
+      margin: 0 auto 14px;
+    }
+    .footer-disclaimer strong { color: var(--pink-rose); font-weight: 500; }
+    .footer-social { font-size: 0.8rem; color: var(--text-light); }
+    .footer-copy { margin-top: 20px; font-size: 0.73rem; color: rgba(107,64,87,0.45); }
+
+    /* ── RESPONSIVE ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .featured-grid { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .cat-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── UTILITY ──────────────────────────────────────── */
+    .mt-8 { margin-top: 8px; }
+    .mb-40 { margin-bottom: 40px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ NAV ════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo" onclick="showPage('home')">Code Pink <span>/ the brain & beyond</span></span>
+    <div class="nav-links">
+      <a onclick="showPage('home')" class="active" id="nav-home">Home</a>
+      <a onclick="showPage('neuroscience')" id="nav-neuroscience">Neuroscience</a>
+      <a onclick="showPage('medicine')" id="nav-medicine">Medicine</a>
+      <a onclick="showPage('cardiology')" id="nav-cardiology">Cardiology</a>
+      <a onclick="showPage('psychology')" id="nav-psychology">Psychology</a>
+      <a onclick="showPage('about')" id="nav-about">About</a>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">×</button>
+  <a onclick="navTo('home')">Home</a>
+  <a onclick="navTo('neuroscience')">Neuroscience</a>
+  <a onclick="navTo('medicine')">Medicine</a>
+  <a onclick="navTo('cardiology')">Cardiology</a>
+  <a onclick="navTo('psychology')">Psychology</a>
+  <a onclick="navTo('about')">About</a>
+</div>
+
+
+<!-- ════════════════════ PAGE: HOME ════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-eyebrow">Est. 2024 · Where science meets curiosity</div>
+    <h1>Understanding<br/>the <em>brain,</em><br/>one article at a time.</h1>
+    <p class="hero-sub">Approachable deep-dives into neuroscience, medicine, and everything in between — no medical degree required.</p>
+    <div class="hero-pill">
+      <button class="pill pill-primary" onclick="showPage('neuroscience')">Explore Articles</button>
+      <button class="pill pill-ghost" onclick="showPage('about')">About the Blog</button>
+    </div>
+  </section>
+
+  <!-- Featured Articles -->
+  <section class="featured-section container">
+    <div class="section-label">Featured</div>
+    <div class="section-title">Latest from the Blog</div>
+    <p class="section-sub">Hand-picked reads to get you started.</p>
+
+    <div class="featured-grid">
+      <!-- Big card -->
+      <div class="glass article-card" onclick="showArticle('synaptic-plasticity')">
+        <span class="card-tag tag-neuro">Neuroscience</span>
+        <div class="card-title">Synaptic Plasticity: How Your Brain Rewires Itself Every Day</div>
+        <p class="card-excerpt">Every time you learn something new, billions of synaptic connections shift, strengthen, and prune. Here's what that actually looks like at the molecular level and why it matters.</p>
+        <div class="card-meta">
+          <span>April 2026</span>
+          <span class="card-meta-dot"></span>
+          <span>8 min read</span>
+        </div>
+      </div>
+
+      <!-- Small cards column -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="glass article-card card-sm" onclick="showArticle('heart-brain-axis')">
+          <span class="card-tag tag-cardio">Cardiology</span>
+          <div class="card-title">The Heart-Brain Axis: A Two-Way Street</div>
+          <p class="card-excerpt">Your heart and brain are in constant conversation. New research shows just how deeply cardiovascular health shapes cognitive function.</p>
+          <div class="card-meta"><span>April 2026</span><span class="card-meta-dot"></span><span>6 min read</span></div>
+        </div>
+        <div class="glass article-card card-sm" onclick="showArticle('glial-cells')">
+          <span class="card-tag tag-neuro">Neuroscience</span>
+          <div class="card-title">AI-brain modeling</div>
+          <p class="card-excerpt">It serves as a "digital twin" to help neuroscientists understand how the brain works, test hypotheses, and study neural disorders in a controlled virtual environment.</p>
+          <div class="card-meta"><span>April 2026</span><span class="card-meta-dot"></span><span>5 min read</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="categories-section container">
+    <div class="section-label">Explore by Topic</div>
+    <div class="section-title">Browse Categories</div>
+    <p class="section-sub">Dive into any area that sparks your curiosity.</p>
+    <div class="cat-grid">
+      <div class="glass cat-card" onclick="showPage('neuroscience')">
+        <span class="cat-icon">🧠</span>
+        <div class="cat-name">Neuroscience</div>
+        <div class="cat-count">3 articles</div>
+      </div>
+      <div class="glass cat-card" onclick="showPage('medicine')">
+        <span class="cat-icon">🩺</span>
+        <div class="cat-name">Medicine</div>
+        <div class="cat-count">2 articles</div>
+      </div>
+      <div class="glass cat-card" onclick="showPage('cardiology')">
+        <span class="cat-icon">❤️</span>
+        <div class="cat-name">Cardiology</div>
+        <div class="cat-count">2 articles</div>
+      </div>
+      <div class="glass cat-card" onclick="showPage('psychology')">
+        <span class="cat-icon">💭</span>
+        <div class="cat-name">Psychology</div>
+        <div class="cat-count">1 article</div>
+      </div>
+    </div>
+  </section>
+</div><!-- /page-home -->
+
+
+<!-- ════════════════════ PAGE: NEUROSCIENCE ════════════════════ -->
+<div class="page" id="page-neuroscience">
+  <div class="page-header container">
+    <span class="card-tag tag-neuro" style="margin-bottom:16px;display:inline-block;">🧠 Neuroscience</span>
+    <h2>The Brain Files</h2>
+    <p>From synapses to consciousness — unpacking the most complex object in the known universe, one article at a time.</p>
+  </div>
+  <div class="article-list container">
+    <div class="article-row">
+
+      <!-- ── ADD NEUROSCIENCE ARTICLES HERE ── -->
+      <!-- Copy one of these .glass.article-card blocks and update the content -->
+
+      <div class="glass article-card" onclick="showArticle('parkinsons-disease')">
+        <span class="card-tag tag-neuro">Neuroscience</span>
+        <div class="card-title">Parkinson's Disease: What Happens When The Brain's Neurons Die?</div>
+        <p class="card-excerpt">Many people live with Parkinson's disease for many years. But what truly happens to one's body?</p>
+        <div class="card-meta"><span>April 2026</span><span class="card-meta-dot"></span><span>8 min read</span></div>
+      </div>
+
+      <div class="glass article-card" onclick="showArticle('synaptic-plasticity')">
+        <span class="card-tag tag-neuro">Neuroscience</span>
+        <div class="card-title">Synaptic Plasticity: How Your Brain Rewires Itself Every Day</div>
+        <p class="card-excerpt">Every time you learn something new, billions of synaptic connections shift, strengthen, and prune. Here's what that actually looks like at the molecular level and why it matters.</p>
+        <div class="card-meta"><span>April 2026</span><span class="card-meta-dot"></span><span>8 min read</span></div>
+      </div>
+
+      <!-- ── END NEUROSCIENCE ARTICLES ── -->
+    </div>
+  </div>
+</div><!-- /page-neuroscience -->
+
+
+<!-- ════════════════════ PAGE: MEDICINE ════════════════════ -->
+<div class="page" id="page-medicine">
+  <div class="page-header container">
+    <span class="card-tag tag-med" style="margin-bottom:16px;display:inline-block;">🩺 Medicine</span>
+    <h2>Medicine Explained</h2>
+    <p>Bringing clinical complexity down to earth — because understanding your body shouldn't require a medical degree.</p>
+  </div>
+  <div class="article-list container">
+    <div class="article-row">
+
+      <!-- ── ADD MEDICINE ARTICLES HERE ── -->
+
+      <!-- ── END MEDICINE ARTICLES ── -->
+    </div>
+  </div>
+</div><!-- /page-medicine -->
+
+
+<!-- ════════════════════ PAGE: CARDIOLOGY ════════════════════ -->
+<div class="page" id="page-cardiology">
+  <div class="page-header container">
+    <span class="card-tag tag-cardio" style="margin-bottom:16px;display:inline-block;">❤️ Cardiology</span>
+    <h2>Heart Matters</h2>
+    <p>The heart beats roughly 100,000 times a day. Here's what's happening inside it — and what can go wrong.</p>
+  </div>
+  <div class="article-list container">
+    <div class="article-row">
+
+      <!-- ── ADD CARDIOLOGY ARTICLES HERE ── -->
+      <div class="glass article-card" onclick="showArticle('heart-brain-axis')">
+        <span class="card-tag tag-neuro">Cardiology</span>
+        <div class="card-title">Heart-Brain Axis: The Hidden Conversation In Your Body</div>
+        <p class="card-excerpt">When we think about emotions, decisions, or stress, we usually focus on the brain. But what if your heart is just as involved?.</p>
+        <div class="card-meta"><span>April 2026</span><span class="card-meta-dot"></span><span>7 min read</span></div>
+      </div>
+      <!-- ── END CARDIOLOGY ARTICLES ── -->
+    </div>
+  </div>
+</div><!-- /page-cardiology -->
+
+<!-- ════════════════════ PAGE: PSYCHOLOGY ════════════════════ -->
+<div class="page" id="page-psychology">
+  <div class="page-header container">
+    <span class="card-tag tag-psych" style="margin-bottom:16px;display:inline-block;">💭 Psychology</span>
+    <h2>Mind Matters</h2>
+    <p>Behaviour, cognition, emotion — exploring what drives us from the inside out.</p>
+  </div>
+  <div class="article-list container">
+    <div class="article-row">
+
+      <!-- ── ADD PSYCHOLOGY ARTICLES HERE ── -->
+
+      <!-- ── END PSYCHOLOGY ARTICLES ── -->
+    </div>
+  </div>
+</div><!-- /page-psychology -->
+
+
+<!-- ════════════════════ PAGE: ABOUT ════════════════════ -->
+<div class="page" id="page-about">
+  <div class="about-page">
+    <div class="about-wrapper">
+      <div class="about-hero">
+        <div class="glass about-avatar">🩷</div>
+        <div class="about-intro">
+          <h2>Hey, I'm the person behind Code Pink.</h2>
+          <!-- ── EDIT YOUR BIO BELOW ── -->
+          <p>I'm a grade 10 student with a deep love for the brain and everything connected to it. Code Pink started as a way to make the science I find fascinating actually readable for people who don't live in labs.</p>
+          <p>Every article is written with curiosity and NOT AI. I try to go beyond the headline and explore what the science actually says, what we still don't know, and why it matters.</p>
+          <p>This blog is a passion project. It is not medical advice, and it never will be. Think of it as a science conversation between friends.</p>
+          <!-- ── END BIO ── -->
+          <div class="about-badges">
+            <span class="badge badge-pink">Neuroscience Enthusiast</span>
+            <span class="badge badge-mint">Science Communicator</span>
+            <span class="badge badge-lilac">Lifelong Learner</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-cards">
+        <div class="glass about-card">
+          <h4>Why Code Pink?</h4>
+          <p>Pink is the colour of brain tissue, of cardiac muscle, of new skin healing over a wound. It felt right. Also — it's just a fun name.</p>
+        </div>
+        <div class="glass about-card">
+          <h4>What You'll Find Here</h4>
+          <p>Long-form explainers, surprising research, and honest takes on complex science — written in plain language without dumbing things down.</p>
+        </div>
+        <div class="glass about-card">
+          <h4>Want to Contribute?</h4>
+          <p>Got a topic you'd love to see covered? Have a submission you want to share? DM us on social media — we'd love to hear from you.</p>
+        </div>
+        <div class="glass about-card">
+          <h4>A Note on Accuracy</h4>
+          <p>Every article is researched with care. But this is not a medical resource. Always consult a qualified professional for personal health questions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-about -->
+
+
+<!-- ════════════════ ARTICLE PAGES ════════════════ -->
+<!--
+  HOW TO ADD A NEW ARTICLE:
+  1. Add an article card in the appropriate category page (search "ADD [CATEGORY] ARTICLES HERE")
+  2. Give it an onclick="showArticle('your-article-id')"
+  3. Copy one of the article page divs below and paste it at the end
+  4. Change the id to match: id="article-your-article-id"
+  5. Fill in the title, tag, date, read time, and body content
+  6. Done!
+-->
+
+<div class="page" id="article-parkinsons-disease">
+  <div class="article-page">
+    <div class="article-wrapper">
+      <span class="article-back" onclick="showPage('neuroscience')">Back to neuroscience</span>
+      <div class="article-tag-line"><span class="card-tag tag-neuro">Category</span></div>
+      <h1 class="article-title">Parkinson's Disease: What Happens When The Brain's Neurons Die?</h1>
+      <div class="article-byline"><span>April 2026</span><span>·</span><span>7 min read</span></div>
+      <div class="article-body">
+        <p>When people hear about Parkinson's disease, the first thing that usually comes to mind is shaking hands and tremors, maybe even a well known athlete like Muhammad Ali who was diagnosed in 1984. While shaking and tremors is one of the most recognizable symptoms, Parkinson's is actually much more complex and affects millions of people worldwide in ways that often go unnoticed.</p>
+        <h3>What is Parkinson's Disease?</h3>
+        <p>It is a progressive neurological disorder that affect's one's movement. It develops when nerve cells in a part of the brain called the substantia nigra begin to break down or die. These cells are responsibile for producing dopamine, a chemical that helps with controlling movement and coordination. As these levels decrease, it becomes harder for the brain to send smooth signals for movement to the muscles.</p>
+        <div class="callout">The substantia nigra (SN) is a key part of motor control, dopamine production and cognition. It's involved in voluntary movement and is the primary site of neurodegeneration in Parkinson's disease.</div>
+        <h3>What Causes It?</h3>
+        <p>While the exact cause of Parkinson's is not fully understood. Many researchers believe it's a mix of genetics and evironmental triggers like toxins or head injuries. One of the most prominant discoveries involves a protein called alpha-synuclein. When someone has Parkinson's, this protein misfolds and clumps together causing strucutres known as Lewy bodies. These clumps disturb normal brain cell function and eventually lead to cell death. The disease targets dopamine-producing neurons. By the time many symptoms appear, scientists estimate that between 60-80% of these neurons may already be lost. Research has been done pointing to two main gene mutations, LRRK2 and SNCA. LRRK2 is a human protein-coding gene that's involved in neuronal signaling and cytoskeletal regulation while SNCA is crucial for synaptic function and implicated in neurodegenerative disorders and known for it's role in Parkinson's disease. </p>
+        <div class="callout">The first discovery of alpha synuclein and lewy bodies was made in 1997 with lead researchers being Maria Grazia Spillantini, Michel Goedert, and Ross Jakes.</div>
+        <h3>Treatments</h3>
+        <p>The most effective and known drug used is Levodopa. It converts into dopamine in the brain, helps reduce the tremors and stiffness. This drug is often combined with other drugs of similar nature to improve effectiveness. Long-term use of these kinds of drugs can lead to side effects including dyskinesia (involuntary movements). Lately, treatments have branched out to more advanced and technological ones. Deep brain stimulation is a procedure where electrodes are implanted into specific parts of the brain. They send electrical signals to regulate abnormal brain activity but is still oftenly used with medications. Along with medications and technological stimulations, rehabilitation therapies help patients maintain their independance longer. With technology advancing daily, scientists are actively working on new treatments like gene therapy, stem cell therapy, and neuroprotective drugs.</p>
+         <h3>Living with Parkinson's</h3>
+        <p>Living with Parkinson's is challenging for the patient and the people supporting them, yet many people continue to lead meaningful lives. For example, Micheal J. Foc, whose raised awareness and funded millions into research through his foundation. Stories like his help change the stigma around the disease, it isn't the end of someone's life but a condition that can be managed with support. Awareness for Parkinsons isn't just supporting patients but the thousands of researchers behind treatments. The more we talk about it, the closer we are to better treatments, the true cause and one day, the cure.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="article-synaptic-plasticity">
+  <div class="article-page">
+    <div class="article-wrapper">
+      <span class="article-back" onclick="showPage('neuroscience')">Back to neuroscience</span>
+      <div class="article-tag-line"><span class="card-tag tag-neuro">Category</span></div>
+      <h1 class="article-title">Syanptic Plasticity: How Your Brain Rewires Itself Every Day</h1>
+      <div class="article-byline"><span>April 2026</span><span>·</span><span>8 min read</span></div>
+      <div class="article-body">
+        <p>Have you ever wondered how you're able to learn a new skill? memorize song lyrics? or just getting better at something? The simple answer is a practice or repitition. The long answer is a conept called synaptic plasticity, which is the brain's ability to constantly adapt and rewire itself. </p>
+        <h3>What Is Synaptic Plasticity?</h3>
+        <p>Synaptic plasticity refers to the ability of connections between neurons (specifically ones called synapses) to strengthen or weaken over time. These changes happen based on experiences, thoughts and actions. Everytime you learn something new, your brain is physically reshaping itself by adjusting how neurons communicate.</p>
+        <div class="callout">In simple terms, your brain isn't fixed.. it's constantly changing based on experiences, actions and thoughts.</div>
+        <h3>How Does it Work?</h3>
+        <p>So your brain contains billions of neurons that communication with eachother through electrical and chemical signals. When you repeat an action (like listening to the same song a couple times) or thought (like studying material for a test), certain neural pathways are used more often leading to two major processes: strengthening connections and weakening connections. When neurons consistantly activate together, their connection become stronger; this process is known as long-term potentiation (LTP). A landmark study by Tim Bliss and Terje Lømo in 1973 first demonstrated LTP in the hippocampus, a brain region crucial for memory. Think of it like creating a path in a forest, the more people use that path the clearer and easier it is to follow. On the opposite side, connections that aren't being used as often can weaken or disappear; this is called synaptic pruning. Research published in "Neuron" highlights how pruning is essential for efficient brain function and development. According to studies like those by Luo and O'Leary (2005), this pruning process is highly active during childhood and adolescence, shaping how efficiently the brain functions. Your brain is basically optimizing itself, keeping what's useful and removing what's not.</p>
+        <h3>The Chemistry Behind It</h3>
+        <p>Synaptic plasticity depends heavily on neurotransmitters like Glutamate and Dopamine. Gluatamate activates receptors (like NMDA) that trigger LTP. Dopamine reinforces learning by signaling reward and motivation in your brain. A major review in "Nature Reviews Neuroscience" explains how these chemical systems drive learning and memory in much more detail. This is why learning is often stronger when it's tied to emotion or reward. For example, successfully solving a problem or achieving a goal triggers dopamine release, which strengthens the neural pathways involved.</p>
+        <h3>Synaptic Plasticity and Mental Health</h3>
+        <p>Research by Ronald S. Duman shows that conditions like depression are associated with reduced synaptic connectivity, particularly in brain regions involved in mood and decision-making. For example, ketamine, an antidepressant, has been shown to rapidly increase synapse formation. Instead of slowly altering neurotransmitters like traditional medications, it appears to restore connectivity between neurons much more quickly. This suggests that mental health disorders may not just be "chemical imbalances" but also involve structural changes in the brain connectivity and that recovery involves rewiring those connections.</p>
+        <h3>Can You Improve Your Brain's Plasticity?</h3>
+        <p>Yes! You can! 
+           Studies by Carl W. Cotman show that physical activity increases levels of brain-derived neurotrophic factor (BDNF), a protein that supports neuron growth and synaptic plasticity. This means exercise doesn't just improve your body, it literally helps your brain form stronger connections. Sleep is also critical. Research by Jan Born demonstrates that sleep helps consolidate synaptic changes made during the day, turning short-term learning into long-term memory. Without sleep, those newly formed connections may weaken or fail to stabilize.</p>
+        <p>Every thought, habit, and experience leaves a physical path in your brain. Over time, these small changes shape how you think, learn, and behave. So the next time learning feels slow or frustrating, remember that your brain isn't stuck, it's actively rewiring itself, one connection at a time.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="article-heart-brain-axis">
+  <div class="article-page">
+    <div class="article-wrapper">
+      <span class="article-back" onclick="showPage('cardiology')">Back to cardiology</span>
+      <div class="article-tag-line"><span class="card-tag tag-cardio">Category</span></div>
+      <h1 class="article-title">Heart-Brain Axis: The Hidden Conversation In Your Body</h1>
+      <div class="article-byline"><span>April 2026</span><span>·</span><span>7 min read</span></div>
+      <div class="article-body">
+        <p> When we think about emotions, decisions, or stress, we normally focus on the brain. But what if your heart is just as involved? The connection between your heart and brain, AKA the Heart-brain axis, is a two-way communication system that influences everything from your emotions to your physical health.</p>
+        <h3>What Is The Heart-Brain Axis?</h3>
+        <p>The Heart-Brain Axis is the signals consistantly being sent between the heart and brain. They communicate with eachother through a network of nerves, hormones, and electrical impluses. This communication typically happens through the autonomic nervous system, which controls automatic body functions like heart rate, breathing, and digestion. There are two main branches of this system; sympathetic nervous system which is your "flight or fright" and parasympathetic nervous system which is your "rest and digest". Your heart responds instantly to signals from the brain as does every other part of your body the heart also sends signals back which is unique to a few parts of your body.</p>
+        <div class="callout">In simple terms, your brain isn't fixed.. it's constantly changing based on experiences, actions and thoughts.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--
+══════════════════════════════════════════════════
+  TEMPLATE: ADD A NEW ARTICLE
+  Copy everything below, paste before this comment,
+  and fill in your content.
+══════════════════════════════════════════════════
+
+<div class="page" id="article-YOUR-ARTICLE-ID">
+  <div class="article-page">
+    <div class="article-wrapper">
+      <span class="article-back" onclick="showPage('CATEGORY-PAGE-ID')">Back to Category Name</span>
+      <div class="article-tag-line"><span class="card-tag tag-TAGTYPE">Category</span></div>
+      <h1 class="article-title">Your Article Title Here</h1>
+      <div class="article-byline"><span>Month Year</span><span>·</span><span>X min read</span></div>
+      <div class="article-body">
+        <p>Opening paragraph...</p>
+        <h3>Section Heading</h3>
+        <p>Body text...</p>
+        <div class="callout">A key quote or callout fact.</div>
+        <h3>Another Section</h3>
+        <p>More body text...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+-->
+
+
+<!-- ════════════════════ FOOTER ════════════════════ -->
+<footer>
+  <div class="footer-logo">Code Pink</div>
+  <div class="footer-links">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('neuroscience')">Neuroscience</a>
+    <a onclick="showPage('medicine')">Medicine</a>
+    <a onclick="showPage('cardiology')">Cardiology</a>
+    <a onclick="showPage('psychology')">Psychology</a>
+    <a onclick="showPage('about')">About</a>
+  </div>
+  <p class="footer-disclaimer">
+    <strong>This blog is made as a fun project. This is NOT medical advice nor is it meant to be used as medical information.</strong>
+  </p>
+  <p class="footer-social">Contact us through social media &nbsp;·&nbsp; Want your submission public? <strong>DM us!</strong></p>
+  <p class="footer-copy">© 2026 Code Pink. Made with curiosity.</p>
+</footer>
+
+
+<script>
+  // ── PAGE NAVIGATION ──────────────────────────────
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Update nav highlights
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+  }
+
+  function showArticle(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('article-' + id);
+    // console.log('Srishti 3 ', target);
+    if (target) {
+      target.classList.add('active');
+      // console.log('Srishti 4');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Clear nav highlight when reading an article
+    // document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  }
+
+  // ── MOBILE MENU ──────────────────────────────────
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  function navTo(id) {
+    document.getElementById('mobileMenu').classList.remove('open');
+    showPage(id);
+  }
+</script>
+</body>
+</html>
